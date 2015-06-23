@@ -1,0 +1,7 @@
+{
+  "showerTime" : 2,
+  "moveTime" : 4,
+  "flowerbedCount" : 7,
+  "sensorValue" : 30,
+  "restTime" : 10
+}
