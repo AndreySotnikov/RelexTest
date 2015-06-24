@@ -1,0 +1,8 @@
+{
+  "showerTime" : [ 0, 0, 0, 0, 0 ],
+  "moveTime" : [ 0, 0, 0, 0, 0 ],
+  "flowerbedCount" : 5,
+  "criticalTemperatureValue" : 30,
+  "criticalWetnessValue" : 75,
+  "restTime" : 10
+}
