@@ -69,7 +69,7 @@ public class Gardener {
             if (flowerbeds.get(i)==0)
                 readyToWash.add(i);
         }
-        if (readyToWash.isEmpty())
+        if (flowerbeds.isEmpty())
             return -1;
         return readyToWash.get(new Random().nextInt(readyToWash.size()));
     }

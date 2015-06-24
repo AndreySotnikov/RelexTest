@@ -7,17 +7,19 @@ public class InputInfo {
     private int showerTime;
     private int moveTime;
     private int flowerbedCount;
-    private int sensorValue;
+    private int criticalTemperatureValue;
+    private int criticalWetnessValue;
     private int restTime;
 
     public InputInfo() {
     }
 
-    public InputInfo(int showerTime, int moveTime, int flowerbedCount, int sensorValue, int restTime) {
+    public InputInfo(int showerTime, int moveTime, int flowerbedCount, int sensorValue,int criticalWetnessValue, int restTime) {
         this.showerTime = showerTime;
         this.moveTime = moveTime;
         this.flowerbedCount = flowerbedCount;
-        this.sensorValue = sensorValue;
+        this.criticalTemperatureValue = sensorValue;
+        this.criticalWetnessValue = criticalWetnessValue;
         this.restTime = restTime;
     }
 
@@ -45,12 +47,20 @@ public class InputInfo {
         this.flowerbedCount = flowerbedCount;
     }
 
-    public int getSensorValue() {
-        return sensorValue;
+    public int getCriticalTemperatureValue() {
+        return criticalTemperatureValue;
     }
 
-    public void setSensorValue(int sensorValue) {
-        this.sensorValue = sensorValue;
+    public void setCriticalTemperatureValue(int criticalTemperatureValue) {
+        this.criticalTemperatureValue = criticalTemperatureValue;
+    }
+
+    public int getCriticalWetnessValue() {
+        return criticalWetnessValue;
+    }
+
+    public void setCriticalWetnessValue(int criticalWetnessValue) {
+        this.criticalWetnessValue = criticalWetnessValue;
     }
 
     public int getRestTime() {

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
 
@@ -23,14 +24,18 @@ public class Main {
         InputInfo inputInfo = mapper.readValue(read(inputConfigFile), InputInfo.class);
         InputAllSensors inputAllSensors = new InputAllSensors();
         for (int i = 0; i < inputInfo.getFlowerbedCount(); i++){
-            inputAllSensors.add(new InputSensor(new ArrayList<Integer>(Arrays.asList(25,30,35)),new ArrayList<Integer>(Arrays.asList(80,75,70)),3));
+            inputAllSensors.add(new InputSensor(new ArrayList<Integer>(Arrays.asList(25,30,35,50,25,60)),new ArrayList<Integer>(Arrays.asList(80,75,70,80,40,60)),3));
         }
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(inputAllSensors);
         write(inputSensorsValue, json);
         //InputInfo inputInfo = new InputInfo(5,10,3,30,240);
+        System.out.println("Отредактируйте журнал темпертаур и введите ОК");
+        Scanner sc = new Scanner(System.in);
+        while (!sc.next().equals("OK"))
+            ;
         Gardener gardener = new Gardener(inputInfo);
-        //gardener.work();
+        gardener.work();
 
     }
 

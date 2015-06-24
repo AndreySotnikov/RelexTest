@@ -3,6 +3,5 @@
   "moveTime" : 4,
   "flowerbedCount" : 7,
   "criticalTemperatureValue" : 30,
-  "criticalWetnessValue" : 75,
   "restTime" : 10
 }

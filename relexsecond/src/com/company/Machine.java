@@ -1,9 +1,11 @@
 package com.company;
 
+import java.util.List;
+
 /**
  * Created by andrey on 23.06.15.
  */
-public class Machine {
+public class Machine extends Thread{
     private int timeToMove;
     private int timeToShower;
 
@@ -27,13 +29,32 @@ public class Machine {
         return false;
     }
 
+
+
     public void init(int timeToMove, int timeToShower) {
         this.timeToMove = timeToMove;
         this.timeToShower = timeToShower;
     }
 
+
     public boolean isFree(){
         return timeToShower==0;
     }
 
+
+    public int getTimeToMove() {
+        return timeToMove;
+    }
+
+    public void setTimeToMove(int timeToMove) {
+        this.timeToMove = timeToMove;
+    }
+
+    public int getTimeToShower() {
+        return timeToShower;
+    }
+
+    public void setTimeToShower(int timeToShower) {
+        this.timeToShower = timeToShower;
+    }
 }

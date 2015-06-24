@@ -15,7 +15,9 @@ public class Gardener {
     private int flowerbedCount;
     private int showerTime;
     private int moveTime;
-    private int criticalSensorValue;
+    private int criticalTemperatureValue;
+    private int criticalWetnessValue;
+    private int restTime;
     private List<Flowerbed> flowerbeds;
     private SensorChangeJournal sensorChangeJournal;
 
@@ -27,62 +29,71 @@ public class Gardener {
         flowerbedCount = inputInfo.getFlowerbedCount();
         showerTime = inputInfo.getShowerTime();
         moveTime = inputInfo.getMoveTime();
-        criticalSensorValue = inputInfo.getSensorValue();
+        restTime = inputInfo.getRestTime();
+        criticalTemperatureValue = inputInfo.getCriticalTemperatureValue();
+        criticalWetnessValue = inputInfo.getCriticalWetnessValue();
         flowerbeds = new ArrayList<Flowerbed>();
-        for (int i=0; i<flowerbedCount; i++){
+        for (int i = 0; i < flowerbedCount; i++) {
             InputSensor inputSensor = sensorChangeJournal.getInputSensors().get(i);
-            flowerbeds.add(new Flowerbed(inputSensor.getTemperatureSensor().get(0),inputSensor.getWetnessSensor().get(0),inputInfo.getRestTime()));
+            flowerbeds.add(new Flowerbed(inputSensor.getTemperatureSensor().get(0), inputSensor.getWetnessSensor().get(0), 0));
         }
         sensorChangeJournal.setFlowerbeds(flowerbeds);
         sensorChangeJournal.start();
 
     }
 
-    public void updateSensors() throws IOException {
-        //ObjectMapper mapper = new ObjectMapper();
-        //InputSensor inputSensor = mapper.readValue(Main.read(Main.inputSensorsValue), InputSensor.class);
-        //sensorValue = inputSensor.getValue();
-    }
 
     public void work() throws InterruptedException, IOException {
-        int currentFlowerbed=-1;
+        int currentFlowerbed = -1;
         boolean isDone;
-        while (true){
+        while (true) {
             System.out.println(flowerbeds);
-            //updateSensors();
-//            if (sensorValue > criticalSensorValue){
-//                if (machine.isFree()){
-//                    currentFlowerbed = pickFlowerbed();
-//                    System.out.println("Машина отправлена к клумбе " + currentFlowerbed);
-//                    machine.init(moveTime, showerTime);
-//                    isDone = machine.dosmth();
-//                }
-//                else {
-//                    isDone = machine.dosmth();
-//                }
-////                if (isDone)
-////                    flowerbeds.set(currentFlowerbed, restTime);
-//            }
+            if (currentFlowerbed!=-1 && criticalTemperatureValue<=flowerbeds.get(currentFlowerbed).getTemperatureSensor() && criticalWetnessValue>=flowerbeds.get(currentFlowerbed).getWetnessSensor()){
+                Thread.sleep(1000);
+                updateFlowerbeds();
+                continue;
+            }
+            if (machine.isFree()) {
+                currentFlowerbed = pickFlowerbed();
+                if (currentFlowerbed == -1) {
+                    Thread.sleep(1000);
+                    updateFlowerbeds();
+                    continue;
+                }
+
+                System.out.println("Машина отправлена к клумбе " + currentFlowerbed);
+                System.out.println("Температура: " + flowerbeds.get(currentFlowerbed).getTemperatureSensor() +
+                        " Влажность: " + flowerbeds.get(currentFlowerbed).getWetnessSensor());
+                machine.init(moveTime, showerTime);
+                isDone = machine.dosmth();
+            } else {
+                isDone = machine.dosmth();
+            }
+            if (isDone)
+                flowerbeds.get(currentFlowerbed).setRestTime(restTime);
             updateFlowerbeds();
             Thread.sleep(1000);
         }
     }
 
-    public int pickFlowerbed(){
+    public int pickFlowerbed() {
         List<Integer> readyToWash = new ArrayList<Integer>();
-        for (int i=0; i< flowerbedCount; i++){
-//            if (flowerbeds.get(i)==0)
-//                readyToWash.add(i);
+        for (int i = 0; i < flowerbedCount; i++) {
+            if ((flowerbeds.get(i).getWetnessSensor() < criticalWetnessValue
+                    || flowerbeds.get(i).getTemperatureSensor() > criticalTemperatureValue) &&
+                    flowerbeds.get(i).getRestTime() == 0) {
+                readyToWash.add(i);
+            }
         }
-        if (flowerbeds.isEmpty())
+        if (readyToWash.isEmpty())
             return -1;
         return readyToWash.get(new Random().nextInt(readyToWash.size()));
     }
 
-    public void updateFlowerbeds(){
-        for (int i=0; i< flowerbedCount; i++){
-//            if (flowerbeds.get(i)!=0)
-//                flowerbeds.set(i, flowerbeds.get(i)-1);
+    public void updateFlowerbeds() {
+        for (int i = 0; i < flowerbedCount; i++) {
+            if (flowerbeds.get(i).getRestTime() != 0)
+                flowerbeds.get(i).setRestTime(flowerbeds.get(i).getRestTime() - 1);
         }
     }
 }

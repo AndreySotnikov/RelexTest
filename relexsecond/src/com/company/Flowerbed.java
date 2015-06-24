@@ -40,4 +40,9 @@ public class Flowerbed {
     public void setRestTime(int restTime) {
         this.restTime = restTime;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(restTime);
+    }
 }

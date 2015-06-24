@@ -25,7 +25,7 @@ public class SensorChangeJournal extends Thread{
         while(true){
             try {
                 update();
-                System.out.println(inputSensors);
+                //System.out.println(inputSensors);
                 time++;
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
