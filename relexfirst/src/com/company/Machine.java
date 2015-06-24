@@ -7,6 +7,9 @@ public class Machine {
     private int timeToMove;
     private int timeToShower;
 
+    private int printMove = 0;
+    private int printShower = 0;
+
     public Machine(int timeToMove, int timeToShower) {
         this.timeToMove = timeToMove;
         this.timeToShower = timeToShower;
@@ -14,11 +17,21 @@ public class Machine {
 
     public boolean dosmth(){
         if (timeToMove>0) {
-            System.out.println("Машина едет");
+            if (printMove==0)
+                System.out.print("Машина едет #");
+            else
+                System.out.print('#');
+            printMove++;
             timeToMove--;
         }
         else {
-            System.out.println("Идет полив");
+            if (printShower==0) {
+                System.out.println();
+                System.out.print("Идет полив #");
+            }
+            else
+                System.out.print('#');
+            printShower++;
             if (timeToShower>0)
                 timeToShower--;
         }
@@ -30,6 +43,8 @@ public class Machine {
     public void init(int timeToMove, int timeToShower) {
         this.timeToMove = timeToMove;
         this.timeToShower = timeToShower;
+        printMove=0;
+        printShower=0;
     }
 
     public boolean isFree(){

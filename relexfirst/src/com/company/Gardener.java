@@ -3,9 +3,7 @@ package com.company;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by andrey on 23.06.15.
@@ -18,7 +16,7 @@ public class Gardener {
     private int criticalSensorValue;
     private int restTime;
     private int sensorValue;
-    private List<Integer> flowerbeds;
+    private int[] flowerbeds;
 
     public Gardener(InputInfo inputInfo) {
         machine = new Machine(0, 0);
@@ -27,10 +25,7 @@ public class Gardener {
         moveTime = inputInfo.getMoveTime();
         criticalSensorValue = inputInfo.getSensorValue();
         restTime = inputInfo.getRestTime();
-        flowerbeds = new ArrayList<Integer>();
-        for (int i=0; i<flowerbedCount; i++){
-            flowerbeds.add(0);
-        }
+        flowerbeds = new int[flowerbedCount];
     }
 
     public void updateSensors() throws IOException {
@@ -40,33 +35,15 @@ public class Gardener {
     }
 
     public void work() throws InterruptedException, IOException {
-        int currentFlowerbed=-1;
-        boolean isDone;
-        while (true){
-            System.out.println(flowerbeds);
-            updateSensors();
-            if (sensorValue > criticalSensorValue){
-                if (machine.isFree()){
-                    currentFlowerbed = pickFlowerbed();
-                    System.out.println("Машина отправлена к клумбе " + currentFlowerbed);
-                    machine.init(moveTime, showerTime);
-                    isDone = machine.dosmth();
-                }
-                else {
-                    isDone = machine.dosmth();
-                }
-                if (isDone)
-                    flowerbeds.set(currentFlowerbed, restTime);
-            }
-            updateFlowerbeds();
-            Thread.sleep(1000);
-        }
+        Timer timer = new Timer();
+        Worker worker = new Worker();
+        timer.schedule(worker, 0, 1000);
     }
 
-    public int pickFlowerbed(){
+    public int pickFlowerbed() {
         List<Integer> readyToWash = new ArrayList<Integer>();
-        for (int i=0; i< flowerbedCount; i++){
-            if (flowerbeds.get(i)==0)
+        for (int i = 0; i < flowerbedCount; i++) {
+            if (flowerbeds[i] == 0)
                 readyToWash.add(i);
         }
         if (readyToWash.isEmpty())
@@ -74,10 +51,47 @@ public class Gardener {
         return readyToWash.get(new Random().nextInt(readyToWash.size()));
     }
 
-    public void updateFlowerbeds(){
-        for (int i=0; i< flowerbedCount; i++){
-            if (flowerbeds.get(i)!=0)
-                flowerbeds.set(i, flowerbeds.get(i)-1);
+    public void updateFlowerbeds() {
+        for (int i = 0; i < flowerbedCount; i++) {
+            if (flowerbeds[i] != 0)
+                flowerbeds[i] = flowerbeds[i]-1;
+        }
+    }
+
+    class Worker extends TimerTask {
+        private int currentFlowerbed = -1;
+        private boolean isDone;
+        private int time = 0;
+        @Override
+        public void run() {
+            //System.out.println(Arrays.toString(flowerbeds));
+            boolean ok=true;
+            try {
+                updateSensors();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (sensorValue > criticalSensorValue) {
+                if (machine.isFree()) {
+                    currentFlowerbed = pickFlowerbed();
+                    if (currentFlowerbed==-1)
+                        ok = false;
+                    if (ok) {
+                        System.out.println();
+                        System.out.println("Текущее время: " + time + " минут");
+                        System.out.println("Машина отправлена к клумбе " + currentFlowerbed);
+                        machine.init(moveTime, showerTime);
+                        isDone = machine.dosmth();
+                    }
+                } else {
+                    isDone = machine.dosmth();
+                }
+                if (ok && isDone)
+                    flowerbeds[currentFlowerbed] = restTime;
+            }
+            time++;
+            updateFlowerbeds();
         }
     }
 }
+
